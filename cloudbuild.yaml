@@ -1,14 +1,16 @@
 substitutions:
+  _SERVICE_NAME: 'Post'
   _REGION: 'us-east5'
-  _PROJECT_ID: 'gen-lang-client-0473731579'
-
-   
+  _AR_REPO: 'cloud-run-source-deploy'
+  PROJECT_ID: 'gen-lang-client-0473731579'
+  COMMIT_SHA: '$(git rev-parse --short HEAD)'  
 steps:
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${_COMMIT_SHA}', '.']
-
+    args: ['build', '-t', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}', '.']
+    dir: "./app/"
+    RepoDir: "./app/"
   - name: 'gcr.io/cloud-builders/docker'
-    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${_COMMIT_SHA}']
+    args: ['push', '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}']
 
   - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
     entrypoint: gcloud
@@ -16,7 +18,7 @@ steps:
       - 'run'
       - 'deploy'
       - '${_SERVICE_NAME}'
-      - '--image=${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${_COMMIT_SHA}'
+      - '--image=${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
       - '--region=${_REGION}'
       - '--platform=managed'
       - '--allow-unauthenticated'
@@ -24,10 +26,9 @@ steps:
       - '--quiet'
 
 images:
-  - '${_REGION}-docker.pkg.dev/${_PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${_COMMIT_SHA}'
+  - '${_REGION}-docker.pkg.dev/${PROJECT_ID}/${_AR_REPO}/${_SERVICE_NAME}:${COMMIT_SHA}'
 
 options:
   logging: CLOUD_LOGGING_ONLY
-
+  substitutionOption: 'ALLOW_LOOSE'
 timeout: '300s'  
-
