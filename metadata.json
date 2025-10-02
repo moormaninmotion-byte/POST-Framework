@@ -1,0 +1,5 @@
+{
+  "name": "POST Framework Interactive Notebook",
+  "description": "An interactive notebook with live code simulations to explain the tools and methods for implementing the POST (Privacy Of Soft-prompt Transfer) framework.",
+  "requestFramePermissions": []
+}
